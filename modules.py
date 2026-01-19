@@ -90,7 +90,7 @@ class FNO(nn.Module):
                     inputShape['coordOneDim'], 
                     inputShape['coordTwoDim'], 
                     inputShape['nBatch']
-                ) for i in range(2)
+                ) for i in range(1)
             ]
         )
 
