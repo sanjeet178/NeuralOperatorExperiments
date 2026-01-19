@@ -58,33 +58,57 @@ class OperatorBlock(nn.Module):
 
 
 class FNO(nn.Module):
-    def __init__(self, inputShape):
+    def __init__(self, inputShape, outputShape):
         super(FNO, self).__init__()    
 
         # Few input params
-        self.inputChannels = inputShape['inputChannels']
+        self.inputChannels = inputShape['channels']
+        self.outputChannels = outputShape['channels']
         self.projChannel = 6
         self.modeOne = int(min(inputShape['coordOneDim']//2 + 1, 12))
         self.modeTwo = int(min(inputShape['coordTwoDim']//2 + 1, 12))
 
+        # Lifting layer 
+        self.lift = nn.Sequential(
+            nn.Linear(self.inputChannels, self.projChannel),
+            nn.GELU()
+        )
+
         # Projection layer 
         self.projection = nn.Sequential(
-            nn.Linear(self.inputChannels, self.projChannel),
-            nn.Sigmoid()
+            nn.Linear(self.projChannel, self.outputChannels),
+            nn.GELU()
         )
 
         # Operator block
-        self.fnoBlock = OperatorBlock(self.projChannel, self.modeOne, self.modeTwo, inputShape['coordOneDim'], inputShape['coordTwoDim'], inputShape['nBatch'])
+        self.fnoBlock = nn.ModuleList(
+            [
+                OperatorBlock(
+                    self.projChannel, 
+                    self.modeOne, 
+                    self.modeTwo, 
+                    inputShape['coordOneDim'], 
+                    inputShape['coordTwoDim'], 
+                    inputShape['nBatch']
+                ) for i in range(2)
+            ]
+        )
 
     def forward(self, x):
 
-        # projection layer
+        # lifting layer
         permutedX = torch.permute(x, (0,2,3,1))
-        projPermutedX = self.projection(permutedX)
-        projX = torch.permute(projPermutedX, (0,3,1,2))
+        liftPermutedX = self.lift(permutedX)
+        liftX = torch.permute(liftPermutedX, (0,3,1,2))
 
         # FNO blocks
-        fnoX = self.fnoBlock(projX)
+        for i, l in enumerate(self.fnoBlock):
+            fnoX = self.fnoBlock[i](liftX)
 
-        return fnoX
+        # projection layer
+        permutedfnoX = torch.permute(fnoX, (0,2,3,1))
+        projPermutedX = self.projection(permutedfnoX)
+        yComp = torch.permute(projPermutedX, (0,3,1,2))
+
+        return yComp
     

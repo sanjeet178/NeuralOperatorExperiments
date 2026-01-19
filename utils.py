@@ -4,7 +4,7 @@ import os
 def extractXDataShape(xTrainCoordLess):
 
     inputShape = {}           
-    inputShape['nBatch'], inputShape['inputChannels'],inputShape['coordOneDim'], inputShape['coordTwoDim']  = xTrainCoordLess.shape
+    inputShape['nBatch'], inputShape['channels'],inputShape['coordOneDim'], inputShape['coordTwoDim']  = xTrainCoordLess.shape
 
     return inputShape
 
@@ -21,18 +21,17 @@ def loadDataDarcy(fileName:str):
         xTrain = torch.load(x_path, map_location="cpu")
         yTrain = torch.load(y_path, map_location="cpu")
 
-        # input shape
-        inputShape = {}           
-        inputShape['nBatch'], inputShape['inputChannels'],inputShape['coordOneDim'], inputShape['coordTwoDim']  = xTrain.shape
+        # input shape and output shape
+        inputShape = {}   
+        outputShape = {}            
+        inputShape['nBatch'], inputShape['channels'], inputShape['coordOneDim'], inputShape['coordTwoDim']  = xTrain.shape
+        outputShape['nBatch'], outputShape['channels'], outputShape['coordOneDim'], outputShape['coordTwoDim']  = yTrain.shape
+
     else:
         # import training data
         data = torch.load("data/darcy_train_16.pt", map_location="cpu")
         xTrainCoordLess = (data['x']*9+3).float().unsqueeze(1)
         yTrain = data['y'].float().unsqueeze(1)
-
-        # input shape
-        inputShape = {}           
-        inputShape['nBatch'], inputShape['inputChannels'],inputShape['coordOneDim'], inputShape['coordTwoDim']  = xTrainCoordLess.shape
 
         # Add coordinate channels to xTrainCoordLess
         coordOne = torch.linspace(0, 1, steps=inputShape['coordOneDim'])
@@ -42,11 +41,17 @@ def loadDataDarcy(fileName:str):
         channelCoordTwo = gridCoordTwo.unsqueeze(0).repeat(inputShape['nBatch'], 1, 1, 1)
         xTrain = torch.cat([xTrainCoordLess, channelCoordOne, channelCoordTwo], dim=1)
 
+        # input shape and output shape
+        inputShape = {}   
+        outputShape = {}            
+        inputShape['nBatch'], inputShape['channels'], inputShape['coordOneDim'], inputShape['coordTwoDim']  = xTrain.shape
+        outputShape['nBatch'], outputShape['channels'], outputShape['coordOneDim'], outputShape['coordTwoDim']  = yTrain.shape
+
         # Save tensors
         os.makedirs("data", exist_ok=True)
         torch.save(xTrain, x_path)
         torch.save(yTrain, y_path)
         
-    return xTrain, yTrain, inputShape
+    return xTrain, yTrain, inputShape, outputShape
 
 
