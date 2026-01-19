@@ -1,5 +1,6 @@
 import torch
 import os
+import logging
 
 def extractXDataShape(xTrainCoordLess):
 
@@ -17,7 +18,7 @@ def loadDataDarcy(fileName:str):
 
     # ---------- if files already exist, just load ----------
     if os.path.exists(x_path) and os.path.exists(y_path):
-        print(f"Loading cached tensors:\n{x_path}\n{y_path}")
+        logging.info(f"Loading cached tensors:\n{x_path}\n{y_path}")
         xTrain = torch.load(x_path, map_location="cpu")
         yTrain = torch.load(y_path, map_location="cpu")
 
