@@ -6,6 +6,7 @@ import argparse
 import torch.nn as nn
 import numpy as np
 import matplotlib.pyplot as plt
+from postprocessing import plotAndSaveScatter
 
 # Hyperparameters setup
 parser = argparse.ArgumentParser()
@@ -13,6 +14,7 @@ parser.add_argument("--epochs", type=int, default=100)
 parser.add_argument("--learningRate", type=float, default=0.001)
 parser.add_argument("--modelTrain", type=bool, default=False)
 parser.add_argument("--modelInference", type=bool, default=True)
+parser.add_argument("--comparsionTestSize", type=int, default=5)
 args = parser.parse_args()
 
 # logs setup
@@ -77,15 +79,26 @@ if args.modelInference==True:
     saveDir = "./results"
     modelPath = "./modelParams/FNO_1Block_2D.pth"
     lossPath = "./modelParams/loss_history.npy"
+    testDataName = "darcy_test_32.pt"
+    baseTestDataName = os.path.splitext(os.path.basename(testDataName))[0]
     os.makedirs(saveDir, exist_ok=True)
 
-    # load model
+    # load model and data
     modelPath = "./modelParams/FNO_1Block_2D.pth"
     if not os.path.isfile(modelPath):
         logging.error("Model checkpoint not found at path: %s", modelPath)
         raise FileNotFoundError(modelPath)
     model.load_state_dict(torch.load(modelPath, map_location="cpu"))
     model.eval()
+    xTest, yTest, inputShape, outputShape = loadDataDarcy(testDataName)
+    indices = torch.randperm(inputShape["nBatch"])[:args.comparsionTestSize].detach().numpy()
+    selectedXTest = xTest[torch.tensor(indices)]
+    selectedYTest = yTest[torch.tensor(indices)]
+    xCoords, yCoords = selectedXTest[0,1], selectedXTest[0,2]
+    selectedYComp = model(selectedXTest)
+
+    # Scatter plots
+    plotAndSaveScatter(selectedYComp, selectedYTest, saveDir, baseTestDataName)
 
     # Load loss history
     loss_history = np.load("./modelParams/loss_history.npy")
@@ -104,3 +117,5 @@ if args.modelInference==True:
     # Save figure
     plt.savefig(os.path.join(saveDir, "training_loss.png"), dpi=300, bbox_inches="tight")
     plt.close()  
+
+    logging.info("Inference has ended !!!!")

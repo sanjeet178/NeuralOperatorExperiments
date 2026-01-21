@@ -29,11 +29,16 @@ def loadDataDarcy(fileName:str):
         outputShape['nBatch'], outputShape['channels'], outputShape['coordOneDim'], outputShape['coordTwoDim']  = yTrain.shape
 
     else:
+
         # import training data
         data = torch.load("data/darcy_train_16.pt", map_location="cpu")
         xTrainCoordLess = (data['x']*9+3).float().unsqueeze(1)
         yTrain = data['y'].float().unsqueeze(1)
 
+        # input shape and output shape
+        inputShape = {}   
+        inputShape['nBatch'], inputShape['channels'], inputShape['coordOneDim'], inputShape['coordTwoDim']  = xTrainCoordLess.shape
+       
         # Add coordinate channels to xTrainCoordLess
         coordOne = torch.linspace(0, 1, steps=inputShape['coordOneDim'])
         coordTwo = torch.linspace(0, 1, steps=inputShape['coordTwoDim'])
@@ -42,8 +47,7 @@ def loadDataDarcy(fileName:str):
         channelCoordTwo = gridCoordTwo.unsqueeze(0).repeat(inputShape['nBatch'], 1, 1, 1)
         xTrain = torch.cat([xTrainCoordLess, channelCoordOne, channelCoordTwo], dim=1)
 
-        # input shape and output shape
-        inputShape = {}   
+        # input shape and output shape  
         outputShape = {}            
         inputShape['nBatch'], inputShape['channels'], inputShape['coordOneDim'], inputShape['coordTwoDim']  = xTrain.shape
         outputShape['nBatch'], outputShape['channels'], outputShape['coordOneDim'], outputShape['coordTwoDim']  = yTrain.shape

@@ -27,7 +27,7 @@ class SpectralConv2d(nn.Module):
         weightMulxFt = torch.einsum("bixy,ioxy->boxy", xFt[:, :, :self.modesOne, :self.modesTwo], self.complexWeight)
         outFt[:, :, :self.modesOne, :self.modesTwo] = weightMulxFt
 
-        # apply iverse fourier transform
+        # apply inverse fourier transform
         outIfft = torch.fft.irfft2(outFt, s = (self.coordOneDim, self.coordTwoDim)).real
     
         return outIfft

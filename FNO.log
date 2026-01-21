@@ -1,0 +1,26 @@
+[2026-01-21 11:35:43] INFO: Loading cached tensors:
+data/xTrain_darcy_train_16.pt
+data/yTrain_darcy_train_16.pt
+[2026-01-21 11:35:43] INFO: xTrain.shape, yTrain.shape: torch.Size([1000, 3, 16, 16]), torch.Size([1000, 1, 16, 16])
+[2026-01-21 11:35:43] INFO: Model architecture: FNO(
+  (lift): Sequential(
+    (0): Linear(in_features=3, out_features=6, bias=True)
+    (1): GELU(approximate='none')
+  )
+  (projection): Sequential(
+    (0): Linear(in_features=6, out_features=1, bias=True)
+    (1): GELU(approximate='none')
+  )
+  (fnoBlock): ModuleList(
+    (0): OperatorBlock(
+      (w): Conv2d(6, 6, kernel_size=(1, 1), stride=(1, 1))
+      (spectralConv): SpectralConv2d()
+    )
+  )
+)
+[2026-01-21 11:35:43] INFO: Total trainable parameters in the model: 2989
+[2026-01-21 11:35:43] INFO: Inference has begun !!!!
+[2026-01-21 11:35:43] INFO: Loading cached tensors:
+data/xTrain_darcy_test_32.pt
+data/yTrain_darcy_test_32.pt
+[2026-01-21 11:35:47] INFO: Inference has ended !!!!
