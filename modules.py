@@ -53,7 +53,6 @@ class OperatorBlock(nn.Module):
         outTwo = self.spectralConv(x)
         
         # output of both convolutions added
-        logging.info(f"{outOne.shape}, {outTwo.shape}")
         output = F.gelu(outOne + outTwo)
 
         return output

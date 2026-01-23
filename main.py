@@ -10,9 +10,9 @@ from postprocessing import plotAndSaveScatter, lossPlot
 
 # Hyperparameters setup
 parser = argparse.ArgumentParser()
-parser.add_argument("--epochs", type=int, default=200)
+parser.add_argument("--epochs", type=int, default=600)
 parser.add_argument("--learningRate", type=float, default=0.001)
-parser.add_argument("--modelTrain", type=bool, default=False)
+parser.add_argument("--modelTrain", type=bool, default=True)
 parser.add_argument("--modelInference", type=bool, default=True)
 parser.add_argument("--comparsionTestSize", type=int, default=5)
 args = parser.parse_args()
@@ -49,7 +49,7 @@ if args.modelTrain==True:
 
     # Training details setup
     model.train()
-    optimiser = torch.optim.Adam(model.parameters(), lr = args.learningRate)
+    optimiser = torch.optim.Rprop(model.parameters(), lr = args.learningRate)
     mse = nn.MSELoss()
     lossArray = np.zeros((args.epochs, 2))
 
