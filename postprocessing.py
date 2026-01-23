@@ -60,3 +60,17 @@ def plotAndSaveScatter(
             dpi=300
         )
         plt.close(fig)
+
+def lossPlot(epochs, losses, saveDir):
+
+    plt.figure()
+    plt.scatter(epochs, losses, marker='o')
+    plt.yscale("log")
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.title("Training Loss")
+    plt.grid(True)
+
+    # Save figure
+    plt.savefig(os.path.join(saveDir, "training_loss.png"), dpi=300, bbox_inches="tight")
+    plt.close()  

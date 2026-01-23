@@ -1,8 +1,5 @@
-[2026-01-21 11:35:43] INFO: Loading cached tensors:
-data/xTrain_darcy_train_16.pt
-data/yTrain_darcy_train_16.pt
-[2026-01-21 11:35:43] INFO: xTrain.shape, yTrain.shape: torch.Size([1000, 3, 16, 16]), torch.Size([1000, 1, 16, 16])
-[2026-01-21 11:35:43] INFO: Model architecture: FNO(
+[2026-01-23 22:19:27] INFO: xTrain.shape, yTrain.shape: torch.Size([1000, 3, 16, 16]), torch.Size([1000, 1, 16, 16])
+[2026-01-23 22:19:27] INFO: Model architecture: FNO(
   (lift): Sequential(
     (0): Linear(in_features=3, out_features=6, bias=True)
     (1): GELU(approximate='none')
@@ -18,9 +15,26 @@ data/yTrain_darcy_train_16.pt
     )
   )
 )
-[2026-01-21 11:35:43] INFO: Total trainable parameters in the model: 2989
-[2026-01-21 11:35:43] INFO: Inference has begun !!!!
-[2026-01-21 11:35:43] INFO: Loading cached tensors:
-data/xTrain_darcy_test_32.pt
-data/yTrain_darcy_test_32.pt
-[2026-01-21 11:35:47] INFO: Inference has ended !!!!
+[2026-01-23 22:19:27] INFO: Total trainable parameters in the model: 2989
+[2026-01-23 22:19:27] INFO: Training has begun !!!!
+[2026-01-23 22:19:29] INFO: epoch = 0, loss = 0.41898736357688904
+[2026-01-23 22:19:30] INFO: epoch = 10, loss = 0.2622813284397125
+[2026-01-23 22:19:30] INFO: epoch = 20, loss = 0.10073467344045639
+[2026-01-23 22:19:31] INFO: epoch = 30, loss = 0.05234691873192787
+[2026-01-23 22:19:31] INFO: epoch = 40, loss = 0.022376520559191704
+[2026-01-23 22:19:32] INFO: epoch = 50, loss = 0.0170269887894392
+[2026-01-23 22:19:32] INFO: epoch = 60, loss = 0.014476906508207321
+[2026-01-23 22:19:33] INFO: epoch = 70, loss = 0.013444612734019756
+[2026-01-23 22:19:33] INFO: epoch = 80, loss = 0.012800733558833599
+[2026-01-23 22:19:34] INFO: epoch = 90, loss = 0.012083284556865692
+[2026-01-23 22:19:34] INFO: epoch = 100, loss = 0.011524236761033535
+[2026-01-23 22:19:35] INFO: epoch = 110, loss = 0.011098663322627544
+[2026-01-23 22:19:36] INFO: epoch = 120, loss = 0.010788924060761929
+[2026-01-23 22:19:36] INFO: epoch = 130, loss = 0.010518556460738182
+[2026-01-23 22:19:37] INFO: epoch = 140, loss = 0.010282101109623909
+[2026-01-23 22:19:37] INFO: epoch = 150, loss = 0.010136289522051811
+[2026-01-23 22:19:38] INFO: epoch = 160, loss = 0.00997453648597002
+[2026-01-23 22:19:38] INFO: epoch = 170, loss = 0.009833949618041515
+[2026-01-23 22:19:39] INFO: epoch = 180, loss = 0.009718785062432289
+[2026-01-23 22:19:39] INFO: epoch = 190, loss = 0.009615465067327023
+[2026-01-23 22:19:40] INFO: Inference has begun !!!!

@@ -6,13 +6,13 @@ import argparse
 import torch.nn as nn
 import numpy as np
 import matplotlib.pyplot as plt
-from postprocessing import plotAndSaveScatter
+from postprocessing import plotAndSaveScatter, lossPlot
 
 # Hyperparameters setup
 parser = argparse.ArgumentParser()
-parser.add_argument("--epochs", type=int, default=100)
+parser.add_argument("--epochs", type=int, default=200)
 parser.add_argument("--learningRate", type=float, default=0.001)
-parser.add_argument("--modelTrain", type=bool, default=False)
+parser.add_argument("--modelTrain", type=bool, default=True)
 parser.add_argument("--modelInference", type=bool, default=True)
 parser.add_argument("--comparsionTestSize", type=int, default=5)
 args = parser.parse_args()
@@ -88,6 +88,7 @@ if args.modelInference==True:
     if not os.path.isfile(modelPath):
         logging.error("Model checkpoint not found at path: %s", modelPath)
         raise FileNotFoundError(modelPath)
+    
     model.load_state_dict(torch.load(modelPath, map_location="cpu"))
     model.eval()
     xTest, yTest, inputShape, outputShape = loadDataDarcy(testDataName)
@@ -106,16 +107,6 @@ if args.modelInference==True:
     losses = loss_history[:, 1]
 
     # Plot
-    plt.figure()
-    plt.scatter(epochs, losses, marker='o')
-    plt.yscale("log")
-    plt.xlabel("Epoch")
-    plt.ylabel("Loss")
-    plt.title("Training Loss")
-    plt.grid(True)
-
-    # Save figure
-    plt.savefig(os.path.join(saveDir, "training_loss.png"), dpi=300, bbox_inches="tight")
-    plt.close()  
+    lossPlot(epochs, losses, saveDir)
 
     logging.info("Inference has ended !!!!")
