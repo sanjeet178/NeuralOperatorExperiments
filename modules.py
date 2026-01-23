@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import logging
 
 class SpectralConv2d(nn.Module):
     def __init__(self, projChannel, modesOne, modesTwo, coordOneDim, coordTwoDim, nBatch):
@@ -23,12 +24,12 @@ class SpectralConv2d(nn.Module):
         xFt = torch.fft.rfft2(x)
 
         # multiply weight with xFt. Truncation of higher modes is also take care here
-        outFt = torch.zeros_like(xFt, dtype=torch.cfloat)
+        outFt = torch.zeros_like(x, dtype=torch.cfloat)
         weightMulxFt = torch.einsum("bixy,ioxy->boxy", xFt[:, :, :self.modesOne, :self.modesTwo], self.complexWeight)
         outFt[:, :, :self.modesOne, :self.modesTwo] = weightMulxFt
 
         # apply inverse fourier transform
-        outIfft = torch.fft.irfft2(outFt, s = (self.coordOneDim, self.coordTwoDim)).real
+        outIfft = torch.fft.irfft2(outFt, s=(self.coordOneDim, self.coordTwoDim)).real
     
         return outIfft
 
@@ -51,22 +52,23 @@ class OperatorBlock(nn.Module):
         outOne = self.w(x)
         outTwo = self.spectralConv(x)
         
-        # output of both convolutios added
+        # output of both convolutions added
+        logging.info(f"{outOne.shape}, {outTwo.shape}")
         output = F.gelu(outOne + outTwo)
 
         return output
 
 
 class FNO(nn.Module):
-    def __init__(self, inputShape, outputShape):
+    def __init__(self, inputShape, outputShape, modeOne, modeTwo):
         super(FNO, self).__init__()    
 
         # Few input params
         self.inputChannels = inputShape['channels']
         self.outputChannels = outputShape['channels']
         self.projChannel = 6
-        self.modeOne = int(min(inputShape['coordOneDim']//2 + 1, 12))
-        self.modeTwo = int(min(inputShape['coordTwoDim']//2 + 1, 12))
+        self.modeOne = modeOne  
+        self.modeTwo = modeTwo 
 
         # Lifting layer 
         self.lift = nn.Sequential(

@@ -12,7 +12,7 @@ from postprocessing import plotAndSaveScatter, lossPlot
 parser = argparse.ArgumentParser()
 parser.add_argument("--epochs", type=int, default=200)
 parser.add_argument("--learningRate", type=float, default=0.001)
-parser.add_argument("--modelTrain", type=bool, default=True)
+parser.add_argument("--modelTrain", type=bool, default=False)
 parser.add_argument("--modelInference", type=bool, default=True)
 parser.add_argument("--comparsionTestSize", type=int, default=5)
 args = parser.parse_args()
@@ -33,9 +33,11 @@ currentDir = os.getcwd()
 # load data
 xTrain, yTrain, inputShape, outputShape = loadDataDarcy("darcy_train_16.pt")
 logging.info(f"xTrain.shape, yTrain.shape: {xTrain.shape}, {yTrain.shape}")
+modeOne = int(min(inputShape['coordOneDim']//2 + 1, 12))
+modeTwo = int(min(inputShape['coordOneDim']//2 + 1, 12))
 
 # create FNO model
-model = FNO(inputShape, outputShape)
+model = FNO(inputShape, outputShape, modeOne, modeTwo)
 logging.info(f"Model architecture: {model}")
 totalTrainableParams = sum(p.numel() for p in model.parameters() if p.requires_grad)
 logging.info(f"Total trainable parameters in the model: {totalTrainableParams}")
@@ -47,7 +49,7 @@ if args.modelTrain==True:
 
     # Training details setup
     model.train()
-    optimiser = torch.optim.Rprop(model.parameters(), lr = args.learningRate)
+    optimiser = torch.optim.Adam(model.parameters(), lr = args.learningRate)
     mse = nn.MSELoss()
     lossArray = np.zeros((args.epochs, 2))
 
@@ -89,14 +91,16 @@ if args.modelInference==True:
         logging.error("Model checkpoint not found at path: %s", modelPath)
         raise FileNotFoundError(modelPath)
     
-    model.load_state_dict(torch.load(modelPath, map_location="cpu"))
-    model.eval()
+  
     xTest, yTest, inputShape, outputShape = loadDataDarcy(testDataName)
+    modelEval = FNO(inputShape, outputShape, modeOne, modeTwo)
+    modelEval.load_state_dict(torch.load(modelPath, map_location="cpu"))
+    modelEval.eval()
     indices = torch.randperm(inputShape["nBatch"])[:args.comparsionTestSize].detach().numpy()
     selectedXTest = xTest[torch.tensor(indices)]
     selectedYTest = yTest[torch.tensor(indices)]
     xCoords, yCoords = selectedXTest[0,1], selectedXTest[0,2]
-    selectedYComp = model(selectedXTest)
+    selectedYComp = modelEval(selectedXTest)
 
     # Scatter plots
     plotAndSaveScatter(selectedYComp, selectedYTest, saveDir, baseTestDataName)
