@@ -47,9 +47,7 @@ Key features:
 
 Traditional neural networks struggle to generalize across discretizations and resolutions. Neural operators address this by directly learning the **operator** mapping:
 
-[
-\mathcal{G}: a(x) \mapsto u(x)
-]
+$\mathcal{G}: a(x) \mapsto u(x)$
 
 where `a(x)` is an input function (e.g., coefficients, forcing terms) and `u(x)` is the solution field.
 
