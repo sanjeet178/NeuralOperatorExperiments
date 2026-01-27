@@ -49,7 +49,7 @@ Traditional neural networks struggle to generalize across discretizations and re
 
 $\mathcal{G}: a(x) \mapsto u(x)$
 
-where `a(x)` is an input function (e.g., coefficients, forcing terms) and `u(x)` is the solution field.
+where `a(x)` is an input function (x-coordinate, y-coordinate, diffusion coefficient in the case of darcy equation) and `u(x)` is the solution field (velocity field in the case of darcy equation).
 
 ---
 
